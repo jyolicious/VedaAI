@@ -52,8 +52,11 @@ The frontend listens on `http://localhost:3000` by default.
 PORT=4000
 MONGODB_URI=mongodb://localhost:27017/vedaai
 REDIS_URL=redis://localhost:6379
-ANTHROPIC_API_KEY=
+GROQ_API_KEY=
 FRONTEND_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=
+JWT_SECRET=
+
 ```
 
 ### Frontend `.env.local`
