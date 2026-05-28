@@ -11,12 +11,19 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const t = localStorage.getItem('token');
-    const u = localStorage.getItem('userName');
-    const s = localStorage.getItem('schoolName');
-    setToken(t);
-    setUserName(u);
-    setSchoolName(s);
+    const read = () => {
+      const t = localStorage.getItem('token');
+      const u = localStorage.getItem('userName');
+      const s = localStorage.getItem('schoolName');
+      setToken(t);
+      setUserName(u);
+      setSchoolName(s);
+    };
+
+    read();
+    const onAuth = () => read();
+    window.addEventListener('auth:changed', onAuth);
+    return () => window.removeEventListener('auth:changed', onAuth);
   }, []);
 
   function handleLogout() {
@@ -26,6 +33,7 @@ export default function Header() {
     setToken(null);
     setUserName(null);
     setSchoolName(null);
+    window.dispatchEvent(new Event('auth:changed'));
     router.push('/login');
   }
 

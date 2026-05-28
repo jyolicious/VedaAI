@@ -22,6 +22,8 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('userName', data.user.name);
       localStorage.setItem('schoolName', data.user.schoolName || '');
+      // notify other components that auth changed so header updates immediately
+      window.dispatchEvent(new Event('auth:changed'));
       router.push('/');
     } catch (err: any) {
       setError(err.message || 'Login failed');
