@@ -1,82 +1,76 @@
-# VedaAI — AI Assessment Creator
+# VedaAI
 
-> Internship Assignment | Full-Stack AI-Powered Question Paper Generator
+A full-stack AI teaching assistant for creating assignments, handling library uploads, and managing teacher workflows.
 
-## Architecture Overview
+## What this repo contains
 
-```
-frontend/          Next.js 14 + TypeScript + Zustand + WebSocket
-backend/           Node.js + Express + TypeScript
-  ├─ MongoDB       Stores assignments & generated papers
-  ├─ Redis         Caching + job state tracking
-  ├─ BullMQ        Background job processing (AI generation, PDF export)
-  └─ WebSocket     Real-time progress updates to frontend
-AI Engine          Claude API (Anthropic) with structured prompt engineering
-```
+- `frontend/` — Next.js + TypeScript app
+- `backend/` — Express + TypeScript API
+- `backend/public/library` — optional storage location for uploaded library files
 
-## Flow
+## Key features
 
-```
-Teacher fills form → POST /api/assignments
-→ BullMQ job queued → Worker calls Claude API
-→ Structured JSON parsed → Stored in MongoDB
-→ WebSocket event pushed → Frontend renders paper
-```
+- Teacher dashboard pages with a sidebar:
+  - `/assignments`
+  - `/library`
+  - `/toolkit`
+- Public pages without sidebar:
+  - `/login`
+  - `/signup`
+- Library upload flow with file title support and download links
+- Authenticated API access using JWT tokens
 
-## Setup
-
-### Prerequisites
-- Node.js 18+
-- MongoDB (local or Atlas)
-- Redis (local or Upstash)
-- Anthropic API Key
+## Run locally
 
 ### Backend
 
 ```bash
 cd backend
-cp .env.example .env       # Fill in your keys
 npm install
-npm run dev                # Starts on :4000
+# ensure .env has the correct values
+npm run dev
 ```
+
+The backend listens on `http://localhost:4000` by default.
 
 ### Frontend
 
 ```bash
 cd frontend
-cp .env.example .env.local # Fill in backend URL
 npm install
-npm run dev                # Starts on :3000
+# ensure .env.local sets NEXT_PUBLIC_API_URL=http://localhost:4000
+npm run dev
 ```
 
-### Environment Variables
+The frontend listens on `http://localhost:3000` by default.
 
-**Backend `.env`:**
-```
+## Recommended env vars
+
+### Backend `.env`
+
+```env
 PORT=4000
 MONGODB_URI=mongodb://localhost:27017/vedaai
 REDIS_URL=redis://localhost:6379
-ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_API_KEY=
 FRONTEND_URL=http://localhost:3000
 ```
 
-**Frontend `.env.local`:**
-```
+### Frontend `.env.local`
+
+```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXT_PUBLIC_WS_URL=ws://localhost:4000
 ```
 
-## Key Design Decisions
+## Notes
 
-- **Zustand** for global state (assignments list, active generation job, WebSocket connection status)
-- **BullMQ** decouples HTTP request from slow AI generation — user gets instant response, paper arrives via WebSocket
-- **Structured prompting** — AI returns typed JSON (`sections[]` with `questions[]`), never rendered raw
-- **Redis** caches generated papers for 1 hour, reducing repeat AI calls
-- **PDF export** uses Puppeteer in a separate BullMQ queue (no blocking the main thread)
+- Sidebar pages now hide the global header and render the dashboard layout instead.
+- Library page supports file upload and file download links.
+- Keep Redis available for queue and websocket support, but core API pages can still start without it if configured.
 
-## Bonus Features
-- Real-time generation progress (WebSocket progress events)
-- PDF download (server-side rendered, properly formatted)
-- Difficulty badges (Easy / Moderate / Hard) with color coding
-- Regenerate action on the output page
-- Mobile-responsive layout
+## Push checklist
+
+- `git add .`
+- `git commit -m "Update README and sidebar/layout behavior"`
+- `git push`
