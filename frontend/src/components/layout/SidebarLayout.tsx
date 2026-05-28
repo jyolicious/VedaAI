@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   Home,
   Users,
@@ -54,6 +55,13 @@ interface SidebarLayoutProps {
 export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutProps) {
   const { assignments, wsConnected } = useAssignmentStore();
   const completedCount = assignments.length;
+  const [userName, setUserName] = useState<string | null>(null);
+  const [schoolName, setSchoolName] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserName(localStorage.getItem('userName'));
+    setSchoolName(localStorage.getItem('schoolName'));
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
@@ -71,7 +79,7 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
 
         {/* Create Assignment CTA */}
         <div className="px-4 pt-4">
-          <Link href="/assignments/create" className="btn-primary w-full justify-center">
+          <Link href="/assignments/create" className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-orange-400 text-orange-600 px-4 py-3 font-semibold shadow-sm hover:bg-orange-50">
             <Plus size={16} />
             Create Assignment
           </Link>
@@ -92,16 +100,31 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
         </nav>
 
         {/* Bottom section */}
-        <div className="px-3 pb-4 space-y-0.5 border-t border-gray-100 pt-3">
-          <NavItem href="/settings" icon={<Settings size={16} />} label="Settings" />
+        <div className="px-3 pb-4 space-y-0.5 border-t border-gray-100 pt-3 flex flex-col justify-between flex-0">
+          <div>
+            <NavItem href="/settings" icon={<Settings size={16} />} label="Settings" />
 
-          {/* WS indicator */}
-          {wsConnected && (
-            <div className="flex items-center gap-2 px-3 py-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs text-gray-500">Live</span>
+            {/* WS indicator */}
+            {wsConnected && (
+              <div className="flex items-center gap-2 px-3 py-1 mt-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-xs text-gray-500">Live</span>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom user card (matches mockup) */}
+          <div className="mt-3 px-3">
+            <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-orange-700 font-semibold text-sm">{userName ? userName.charAt(0).toUpperCase() : 'U'}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 truncate">{schoolName || 'Your School'}</p>
+                <p className="text-xs text-gray-500 truncate">{userName || ''}</p>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </aside>
 
