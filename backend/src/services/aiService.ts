@@ -1,10 +1,5 @@
-import Groq from 'groq-sdk';
 import type { QuestionTypeConfig, GeneratedPaper, GeneratedSection, GeneratedQuestion } from '../types';
-
-const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: process.env.GROQ_BASE_URL,
-});
+import { groqClient } from './groqClient';
 
 // ── Prompt Builder ────────────────────────────────────────────────
 function buildPrompt(

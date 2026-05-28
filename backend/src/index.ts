@@ -5,6 +5,9 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { initWebSocket } from './utils/websocket';
 import assignmentRoutes from './routes/assignments';
+import authRoutes from './routes/auth';
+import libraryRoutes from './routes/library';
+import toolkitRoutes from './routes/toolkit';
 
 const app = express();
 const server = http.createServer(app);
@@ -21,6 +24,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ── Routes ────────────────────────────────────────────────────────
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/library', libraryRoutes);
+app.use('/api/toolkit', toolkitRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
