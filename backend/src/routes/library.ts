@@ -33,9 +33,32 @@ router.post('/upload', auth, upload.single('file'), async (req, res) => {
   const userId = (req as any).userId;
   const name = req.body.name || (req.file && req.file.originalname) || 'untitled';
   const content = req.file ? req.file.buffer.toString('base64') : req.body.content;
+  const mimeType = req.file?.mimetype;
 
-  const item = await LibraryItem.create({ ownerId: userId, name, filename: req.file?.originalname, content });
+  const item = await LibraryItem.create({
+    ownerId: userId,
+    name,
+    filename: req.file?.originalname,
+    mimeType,
+    content,
+  });
+
   res.json(item);
+});
+
+router.get('/download/:id', auth, async (req, res) => {
+  const userId = (req as any).userId;
+  const item = await LibraryItem.findOne({ _id: req.params.id, ownerId: userId });
+  if (!item) return res.status(404).json({ message: 'Item not found' });
+  if (!item.content) return res.status(404).json({ message: 'File not found' });
+
+  const buffer = Buffer.from(item.content, 'base64');
+  const filename = item.filename || item.name || 'download';
+  const mime = item.mimeType || 'application/octet-stream';
+
+  res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+  res.setHeader('Content-Type', mime);
+  return res.send(buffer);
 });
 
 export default router;

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useAssignmentStore } from '@/store/assignmentStore';
+import { SidebarProvider } from './SidebarContext';
 
 interface NavItemProps {
   href: string;
@@ -64,7 +65,8 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <SidebarProvider>
+      <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* ── Sidebar ─────────────────────────────────────────────── */}
       <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-full">
         {/* Logo */}
@@ -149,6 +151,7 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
           {children}
         </main>
       </div>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }

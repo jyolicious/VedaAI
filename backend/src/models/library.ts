@@ -5,6 +5,7 @@ export interface ILibraryItem extends Document {
   name: string;
   filename?: string;
   content?: string; // stored as base64 or text
+  mimeType?: string;
   createdAt: Date;
 }
 
@@ -13,6 +14,7 @@ const LibrarySchema = new Schema<ILibraryItem>(
     ownerId: { type: String, required: true, index: true },
     name: { type: String, required: true },
     filename: { type: String },
+    mimeType: { type: String },
     content: { type: String },
   },
   { timestamps: true }
