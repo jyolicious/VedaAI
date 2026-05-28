@@ -95,17 +95,6 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
         <div className="px-3 pb-4 space-y-0.5 border-t border-gray-100 pt-3">
           <NavItem href="/settings" icon={<Settings size={16} />} label="Settings" />
 
-          {/* User card */}
-          <div className="flex items-center gap-3 px-3 py-3 mt-2">
-            <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-              <span className="text-orange-700 font-semibold text-sm">D</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">Delhi Public School</p>
-              <p className="text-xs text-gray-500 truncate">Bokaro Steel City</p>
-            </div>
-          </div>
-
           {/* WS indicator */}
           {wsConnected && (
             <div className="flex items-center gap-2 px-3 py-1">
@@ -128,13 +117,6 @@ export default function SidebarLayout({ children, breadcrumb }: SidebarLayoutPro
             <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell size={18} className="text-gray-600" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full" />
-            </button>
-            <button className="flex items-center gap-2 hover:bg-gray-100 rounded-xl px-3 py-2 transition-colors">
-              <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-xs font-semibold text-gray-600">J</span>
-              </div>
-              <span className="text-sm font-medium text-gray-700">John Doe</span>
-              <ChevronDown size={14} className="text-gray-400" />
             </button>
           </div>
         </header>
