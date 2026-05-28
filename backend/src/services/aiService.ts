@@ -1,7 +1,10 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import type { QuestionTypeConfig, GeneratedPaper, GeneratedSection, GeneratedQuestion } from '../types';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const groqClient = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: process.env.GROQ_BASE_URL,
+});
 
 // ── Prompt Builder ────────────────────────────────────────────────
 function buildPrompt(
@@ -159,22 +162,36 @@ export async function generateQuestionPaper(
   fileContent?: string,
   onProgress?: (percent: number, message: string) => void
 ): Promise<GeneratedPaper> {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error('Missing GROQ_API_KEY environment variable. Set GROQ_API_KEY in .env to use Groq AI.');
+  }
+
   const prompt = buildPrompt(title, questionTypes, additionalInstructions, fileContent);
 
-  onProgress?.(10, 'Sending request to AI...');
+  onProgress?.(10, 'Sending request to Groq AI...');
+  console.log('🧠 Using Groq provider with model:', process.env.GROQ_MODEL || 'llama-3.3-70b-versatile');
+  console.log('🔑 GROQ_API_KEY present:', Boolean(process.env.GROQ_API_KEY));
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+  const completion = await groqClient.chat.completions.create({
+    model,
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are an expert teacher creating an examination paper. Follow the user instructions exactly and return only valid JSON with no markdown or backticks.',
+      },
+      { role: 'user', content: prompt },
+    ],
     max_tokens: 4096,
-    messages: [{ role: 'user', content: prompt }],
   });
 
   onProgress?.(70, 'Parsing AI response...');
 
-  const rawText = message.content
-    .filter((block) => block.type === 'text')
-    .map((block) => (block as { type: 'text'; text: string }).text)
-    .join('');
+  const rawText = completion.choices?.[0]?.message?.content;
+  if (!rawText || typeof rawText !== 'string') {
+    throw new Error('Invalid response from Groq AI.');
+  }
 
   const paper = parseAIResponse(rawText);
 

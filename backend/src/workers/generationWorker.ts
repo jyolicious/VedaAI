@@ -31,6 +31,11 @@ async function processGenerationJob(job: Job<GenerationJobData>): Promise<void> 
   });
 
   try {
+    console.log(`🧑‍💻 Job ${job.id} using Groq provider for assignment ${assignmentId}`);
+    console.log('    title:', title);
+    console.log('    questionTypes:', JSON.stringify(questionTypes));
+    console.log('    additionalInstructions:', additionalInstructions ? 'present' : 'none');
+
     const paper = await generateQuestionPaper(
       title,
       questionTypes,
@@ -67,6 +72,7 @@ async function processGenerationJob(job: Job<GenerationJobData>): Promise<void> 
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error(`❌ Generation job ${job.id} failed:`, message);
+    console.error('Error object:', error);
 
     await Assignment.findByIdAndUpdate(assignmentId, { status: 'failed' });
     broadcastError(assignmentId, message);

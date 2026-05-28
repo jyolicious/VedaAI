@@ -15,10 +15,10 @@ export function getRedis(): Redis {
 }
 
 // Separate connection for BullMQ (cannot share with commands connection)
-export function getBullRedis(): Redis {
+export function getBullRedis(): any {
   return new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
     maxRetriesPerRequest: null,
-  });
+  }) as any;
 }
 
 // Cache helpers
